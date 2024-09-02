@@ -1,0 +1,232 @@
+openapi: 3.0.3
+info:
+  title: STD23073 - Football Competition Management
+  version: 1.0.0
+  description: management of soccer competitions, teams and players.
+
+servers:
+  - url: https://localhost.STD23073.com
+
+paths:
+  /competitions:
+    get:
+      summary: Get a list of competitions
+      description: list of football competitions.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of competitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompetitionsResponse'
+    post:
+      summary: Create a new competition
+      description: Create a new competition with name and country/continent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Competition'
+      responses:
+        '201':
+          description: Competition created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Competition'
+
+  /teams:
+    get:
+      summary: Get a list of teams
+      description: Gey list of football teams.
+      parameters:
+        - in: query
+          name: teamName
+          schema:
+            type: string
+          description: Filter teams by name.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of teams
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamsResponse'
+    post:
+      summary: Create a new team
+      description: Create a new football team with name and slogan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: Team created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+
+  /teams/{teamId}/players:
+    get:
+      summary: Get a list of players in a team
+      description: Get a list of players for a given team.
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+          description: The ID of the team.
+        - in: query
+          name: playerName
+          schema:
+            type: string
+          description: Filter players by name.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of players in the team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayersResponse'
+    post:
+      summary: Add players to a team
+      description: Add a list of players to a specific team.
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+          description: The ID of the team.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Players'
+      responses:
+        '200':
+          description: Players added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Players'
+
+  /players:
+    post:
+      summary: Create a new player
+      description: Create a new player with name, number, and strong foot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '201':
+          description: Player created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+components:
+  schemas:
+    Competition:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+    CompetitionsResponse:
+      type: object
+      properties:
+        competitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Competition'
+        total:
+          type: integer
+    Team:
+      type: object
+      properties:
+        name:
+          type: string
+        slogan:
+          type: string
+    TeamsResponse:
+      type: object
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+        total:
+          type: integer
+    Player:
+      type: object
+      properties:
+        name:
+          type: string
+        number:
+          type: integer
+          example: 10
+        strongFoot:
+          type: string
+          enum:
+            - Left
+            - Right
+          example: Left
+    Players:
+      type: object
+      properties:
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+    PlayersResponse:
+      type: object
+      properties:
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        total:
+          type: integer
